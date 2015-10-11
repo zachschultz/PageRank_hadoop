@@ -10,13 +10,14 @@ public class AdjacencyReducer extends Reducer<Text, Text, Text, Text> {
 	public void reduce(Text key, Iterable<Text> values, org.apache.hadoop.mapreduce.Reducer<Text, Text, Text, Text>.Context output) throws IOException, InterruptedException {
   
     	System.out.println("REDUCER");
-    	System.out.println(values);
+    	System.out.println(key);
     	
     	Iterator<Text> vIter = values.iterator(); 
     	String list = "";
     	while (vIter.hasNext()) {
     		String v = vIter.next().toString();
-    		list += v + "   ";
+    		System.out.println(v);
+    		list += v + " ";
     		
     	}
     	output.write(key, new Text(list));

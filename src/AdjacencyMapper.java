@@ -19,20 +19,27 @@ public class AdjacencyMapper extends Mapper<LongWritable, Text, Text, Text> {
 //		left value is key
 //		right value is the outlink
 		
+		System.out.println(value);
+		
 		String[] keyAndLink = value.toString().split("\t");
 		System.out.println("CHECKING FOR BLANK INLINK THING");
-		System.out.println(keyAndLink[0].length());
-		System.out.println("checked it");
+//		System.out.println(keyAndLink[0].length());
+//		System.out.println(keyAndLink[0]);
+//		System.out.println("checked it");
 		
 		try {
 			// Our link has no outlinks, but is still real
-			if (keyAndLink[0].length() == 0)
+			if (keyAndLink[0].length() == 0 || keyAndLink[0] == "") {
+				String title = keyAndLink[0];
+				System.out.println(title);
+				System.out.println(keyAndLink[1]);
 				output.write(new Text(keyAndLink[1]), new Text("no outlinks"));
-			else
+			} else
 				output.write(new Text(keyAndLink[0]), new Text(keyAndLink[1]));
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
+		System.out.println("______________________");
 	}
 }
