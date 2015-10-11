@@ -1,0 +1,32 @@
+<mediawiki>
+<page>
+     <title>A</title>
+     <revision>
+         <text>[[B]] </text>
+     </revision>
+</page>
+<page>
+   <title>B</title>
+    <revision>
+       <text> link to [[F]] and link to [[A]] </text>
+    </revision>
+</page>
+<page>
+    <title>C</title>
+    <revision>
+       <text> link to [[A]] and link to [[D]] [[word]] </text>
+    </revision>
+</page>
+<page>
+   <title>E</title>
+   <revision>
+       <text> no outlinks here (no inlinks to E either) </text>
+   </revision>
+</page>
+<page>
+   <title>F</title>
+   <revision>
+      <text> no outlinks here </text>
+   </revision>
+</page>
+</mediawiki>
