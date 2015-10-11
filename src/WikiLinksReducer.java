@@ -39,19 +39,29 @@ public class WikiLinksReducer extends Reducer<Text, Text, Text, Text> {
         // If the key is not a redlink, send it to the output
         if (isNotRedLink) {
         	
+        	boolean noInLinks = false;
+        	
         	String[] linkSplit = links.split(" ");
         	
-        	for (String link : linkSplit) {
-            	try {
-    				output.write(new Text(link), new Text(key));
-    			} catch (InterruptedException e) {
-    				// TODO Auto-generated catch block
-    				e.printStackTrace();
-    			}
-        	}
-
-        	System.out.println(links);
+        	// Check if the key has no inlinks, if so just send "" as its inlink
+        	if (links.length() == 0)
+        		noInLinks = true;
         	
+	        if (!noInLinks) {
+	        	for (String link : linkSplit) {
+	            	try {
+	            		System.out.print(link + ", ");
+	    				output.write(new Text(link), new Text(key));
+	    			} catch (InterruptedException e) {
+	    				// TODO Auto-generated catch block
+	    				e.printStackTrace();
+	    			}
+	        	}
+	        } else {
+	        	output.write(new Text(""), new Text(key));
+	        }
+	        
+	        
         
         } else {
         	

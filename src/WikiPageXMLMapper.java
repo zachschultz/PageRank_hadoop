@@ -58,16 +58,23 @@ public class WikiPageXMLMapper extends Mapper<LongWritable, Text, Text, Text> {
 			}
         }
         
+        System.out.println(pages.equals("!@#$ "));
+        
+        boolean noOutlinks = pages.equals("!@#$ ");
         // Designate this page as not a redlink
         try {
 			output.write(new Text(page), new Text("!@#$"));
+			// This will ensure that we dont lose the node when we return from ingraph
+			if (noOutlinks)
+				output.write(new Text(page), new Text("$#@!"));
+			
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
         
-//        System.out.println("Title link");
-//        System.out.println(page + " -> !@#$");
+        System.out.println("Title link");
+        System.out.println(page + " -> !@#$");
     }
 
 

@@ -19,27 +19,30 @@ public class AdjacencyMapper extends Mapper<LongWritable, Text, Text, Text> {
 //		left value is key
 //		right value is the outlink
 		
-		System.out.println(value);
+//		System.out.println(value);
 		
 		String[] keyAndLink = value.toString().split("\t");
-		System.out.println("CHECKING FOR BLANK INLINK THING");
-//		System.out.println(keyAndLink[0].length());
-//		System.out.println(keyAndLink[0]);
-//		System.out.println("checked it");
+//		System.out.println("CHECKING FOR BLANK INLINK THING");
+////		System.out.println(keyAndLink[0].length());
+////		System.out.println(keyAndLink[0]);
+////		System.out.println("checked it");
+		
+		String A = keyAndLink[0];
+		String B = keyAndLink[1];
 		
 		try {
 			// Our link has no outlinks, but is still real
-			if (keyAndLink[0].length() == 0 || keyAndLink[0] == "") {
-				String title = keyAndLink[0];
-				System.out.println(title);
-				System.out.println(keyAndLink[1]);
-				output.write(new Text(keyAndLink[1]), new Text("no outlinks"));
-			} else
-				output.write(new Text(keyAndLink[0]), new Text(keyAndLink[1]));
+			if (A.equals("$#@!") || A.length() == 0) {
+//				System.out.println(B + " goes to " + A);
+				output.write(new Text(B), new Text(" "));
+			} else {
+//				System.out.println(A + " goes to " + B);
+				output.write(new Text(A), new Text(B));
+			}
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
-		System.out.println("______________________");
+//		System.out.println("______________________");
 	}
 }
