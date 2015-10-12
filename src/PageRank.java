@@ -57,7 +57,7 @@ public class PageRank {
         
         System.out.println(output);
         
-        boolean job2Done = pageRanking.getAdjacencyGraph(new Path(j1OPR), new Path("./testing"));
+        boolean job2Done = pageRanking.getAdjacencyGraph(new Path(j1OPR), new Path("s3://lab03bucket/iter2"));
     }
  
     private boolean getAdjacencyGraph(Path inputPath, Path path) throws IOException {
@@ -76,9 +76,7 @@ public class PageRank {
         job2.setInputFormatClass(TextInputFormat.class);
         job2.setOutputFormatClass(TextOutputFormat.class);
        
-        // Remove output if already exists
-        FileSystem.getLocal(conf).delete(path, true);
-        
+        // Remove output if already exists        
         FileInputFormat.setInputPaths(job2, inputPath);
         FileOutputFormat.setOutputPath(job2, path);  
                      
@@ -110,9 +108,6 @@ public class PageRank {
         job1.setInputFormatClass(XmlInputFormat.class);
         job1.setOutputFormatClass(TextOutputFormat.class);
        
-        // Remove output if already exists
-        FileSystem.getLocal(conf).delete(new Path(outputPath), true);
-        
         FileInputFormat.setInputPaths(job1, new Path(inputPath));
         FileOutputFormat.setOutputPath(job1, new Path(outputPath));  
                      
@@ -125,17 +120,5 @@ public class PageRank {
 		}    
         
         return true;
-    }
-    
-    public void deleteDir(File dir) {
-        File[] files = dir.listFiles();
-
-        for (File myFile: files) {
-            if (myFile.isDirectory()) {  
-                deleteDir(myFile);
-            } 
-            myFile.delete();
-
-        }
     }
 }

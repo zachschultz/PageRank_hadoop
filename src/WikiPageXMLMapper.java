@@ -24,12 +24,24 @@ public class WikiPageXMLMapper extends Mapper<LongWritable, Text, Text, Text> {
         	otherPage = (otherPage.indexOf(":") == -1) ? otherPage : "";
         	otherPage = (otherPage.indexOf("#") == -1) ? otherPage : "";
         	otherPage = checkForSubpageLinks(otherPage);
-        	otherPage = checkForRedLink(otherPage);
+        	
+        	int linkLength = otherPage.length();
+        	if (linkLength >= 3) {
+        		if (otherPage.lastIndexOf(" ") == linkLength - 1 && 
+        				otherPage.substring(0, linkLength-1).lastIndexOf(" ") == linkLength - 2) {
+        			System.out.println("TWO SPACES");
+        			otherPage = "";
+
+        		}
+        	}
+        	
         	if (otherPage == "")
         		continue;
        
         	Text oP = new Text(otherPage.replace(' ', '_'));
+        	
         	pages += oP + " ";
+        	
         	try {
 				output.write(new Text(oP), new Text(t));
 			} catch (InterruptedException e) {
@@ -73,16 +85,6 @@ public class WikiPageXMLMapper extends Mapper<LongWritable, Text, Text, Text> {
 			if (p.toLowerCase().equals(otherPage.toLowerCase()))
 				return "";
 		}
-		return otherPage;
-	}
-
-	private String checkForRedLink(String otherPage) {
-		// TODO Auto-generated method stub
-		boolean error = false;
-		
-		if (error)
-			otherPage = "";
-		
 		return otherPage;
 	}
 
