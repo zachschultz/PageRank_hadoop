@@ -19,8 +19,6 @@ public class AdjacencyMapper extends Mapper<LongWritable, Text, Text, Text> {
 //		left value is key
 //		right value is the outlink
 		
-//		System.out.println(value);
-		
 		String[] keyAndLink = value.toString().split("\t");
 //		System.out.println("CHECKING FOR BLANK INLINK THING");
 ////		System.out.println(keyAndLink[0].length());

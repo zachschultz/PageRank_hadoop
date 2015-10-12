@@ -14,6 +14,8 @@ public class WikiPageXMLMapper extends Mapper<LongWritable, Text, Text, Text> {
     	
 		ArrayList<String> titleAndLinks = parseTitleAndText(value.toString());
 		
+		System.out.println(value);
+		
 		String t = titleAndLinks.remove(0);
 		
 		String pages = "!@#$ ";
@@ -23,6 +25,10 @@ public class WikiPageXMLMapper extends Mapper<LongWritable, Text, Text, Text> {
 			otherPage = otherPage.replace(" ", "_");
         	otherPage = otherPage.split("\\|")[0];
         	otherPage = checkForDuplicates(otherPage, pages);
+        	
+        	otherPage = checkForInterWiki(otherPage);
+        	otherPage = checkForFileLink(otherPage);
+        	
         	otherPage = (otherPage.indexOf(":") == -1) ? otherPage : "";
         	otherPage = (otherPage.indexOf("#") == -1) ? otherPage : "";
         	
@@ -71,6 +77,28 @@ public class WikiPageXMLMapper extends Mapper<LongWritable, Text, Text, Text> {
 		}
 	} 
 
+	private String checkForFileLink(String otherPage) {
+		if (otherPage.length() < 5)
+			return otherPage;
+		if (otherPage.substring(0, 5).equals("File:"))
+			return "";
+		
+		return otherPage;
+	}
+
+	private String checkForInterWiki(String otherPage) {
+
+		if (otherPage.length() < 2)
+			return otherPage;
+		
+		if (otherPage.indexOf(":") == 0 && otherPage.indexOf(":", 1) != -1)
+			return "";
+		if (otherPage.substring(0,2).equals("m:"))
+			return "";
+		
+		return otherPage;
+	}
+
 	private String checkForSubpageLinks(String otherPage) {
 		if (otherPage.length() < 3)
 			return otherPage;
@@ -95,7 +123,7 @@ public class WikiPageXMLMapper extends Mapper<LongWritable, Text, Text, Text> {
 		Pattern titleText = Pattern.compile("<title[^>]*>(.*)</title>");
 		Pattern linksText = Pattern.compile("<text[^>]*>(.*)</text>",Pattern.DOTALL);
 		Pattern linkPattern = Pattern.compile("\\[\\[([^\\[]*?)\\]\\]");
-				
+		
 		String titleStr = "";
 		Matcher title = titleText.matcher(value);
 		while (title.find()) {

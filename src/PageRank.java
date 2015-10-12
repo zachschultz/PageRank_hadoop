@@ -41,14 +41,15 @@ public class PageRank {
         
         boolean job2Done = pageRanking.getAdjacencyGraph(new Path(j1OPR), new Path(AWS2));
         
-        String j2OPR = AWS2 + "/part-r-00000";
+        String j2OPRAWS = AWS2 + "/part-r-00000";
+        String j2OPR = local + "/part-r-00000";
         String AWSN = "s3://lab03bucket/N";
         String localN = "./N";
         
 
-        boolean job3Done = pageRanking.getNCount(new Path(j2OPR), new Path(AWSN));
+        boolean job3Done = pageRanking.getNCount(new Path(j2OPRAWS), new Path(AWSN));
         
-       
+     
     }	
     
     
