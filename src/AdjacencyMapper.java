@@ -12,7 +12,7 @@ public class AdjacencyMapper extends Mapper<LongWritable, Text, Text, Text> {
 	@Override
     public void map(LongWritable key, Text value, Context output) throws IOException {    
     	
-		System.out.println("MAPPER:");
+		System.out.println("ADJACENCYMAPPER:");
 		
 		
 		// split value on tab
@@ -32,7 +32,7 @@ public class AdjacencyMapper extends Mapper<LongWritable, Text, Text, Text> {
 		
 		try {
 			// Our link has no outlinks, but is still real
-			if (A.equals("$#@!") || A.length() == 0) {
+			if (A.equals("$#@!")) {
 //				System.out.println(B + " goes to " + A);
 				output.write(new Text(B), new Text(" "));
 			} else {

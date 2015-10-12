@@ -19,7 +19,6 @@ public class WikiLinksReducer extends Reducer<Text, Text, Text, Text> {
         Iterator<Text> vIter = values.iterator();
                 
         
-        System.out.println("Inlinks");
         // Brett concern (and zach's): if n pages link to a redlink
         // we will iterate n times and it could be wasteful
         while(vIter.hasNext()){
@@ -43,10 +42,13 @@ public class WikiLinksReducer extends Reducer<Text, Text, Text, Text> {
         	
         	String[] linkSplit = links.split(" ");
         	
+            System.out.println("Inlinks");
+
         	// Check if the key has no inlinks, if so just send "" as its inlink
-        	if (links.length() == 0)
+        	if (links.length() == 0) {
         		noInLinks = true;
-        	
+        		System.out.println("No inlinks is true");
+        	}
 	        if (!noInLinks) {
 	        	for (String link : linkSplit) {
 	            	try {
@@ -58,7 +60,8 @@ public class WikiLinksReducer extends Reducer<Text, Text, Text, Text> {
 	    			}
 	        	}
 	        } else {
-	        	output.write(new Text(""), new Text(key));
+	        	// $#@! is the key for a link with no outlinks
+	        	output.write(new Text("$#@!"), new Text(key));
 	        }
 	        
 	        
