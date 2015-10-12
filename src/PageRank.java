@@ -3,16 +3,19 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.*;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.hadoop.mapreduce.lib.reduce.LongSumReducer;
 
 
 public class PageRank {
@@ -31,36 +34,59 @@ public class PageRank {
         
         System.out.println(job1Output);
         String j1OPR = job1Output + "/part-r-00000";
-        File f = new File(j1OPR);
-        System.out.println(f.exists());
+
         
-        String output = "";
-        BufferedReader br = null;
-        try {
-        	br = new BufferedReader(new FileReader(f));
-        	String text = "";
-        	while ((text = br.readLine()) != null) {
-        		output += text + "\n";
-        	}
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (br != null) {
-                    br.close();
-                }
-            } catch (IOException e) {
-            }
-        }
+        String AWS2 = "s3://lab03bucket/iter2";
+        String local = "./testing";
         
-        System.out.println(output);
+        boolean job2Done = pageRanking.getAdjacencyGraph(new Path(j1OPR), new Path(AWS2));
         
-        boolean job2Done = pageRanking.getAdjacencyGraph(new Path(j1OPR), new Path("s3://lab03bucket/iter2"));
-    }
+        String j2OPR = AWS2 + "/part-r-00000";
+        String AWSN = "s3://lab03bucket/N";
+        String localN = "./N";
+        
+
+        boolean job3Done = pageRanking.getNCount(new Path(j2OPR), new Path(AWSN));
+        
+       
+    }	
+    
+    
  
-    private boolean getAdjacencyGraph(Path inputPath, Path path) throws IOException {
+    private boolean getNCount(Path inputPath, Path path) throws IOException {
+        Configuration conf = new Configuration();
+        
+    	Job job3 = Job.getInstance(conf);
+        job3.setJarByClass(PageRank.class);
+        
+        job3.setOutputKeyClass(Text.class);
+        job3.setOutputValueClass(Text.class);
+        
+        // Our class to parse links from content.
+        job3.setMapperClass(NCountMapper.class);
+        job3.setReducerClass(NCountReducer.class);
+        
+        job3.setInputFormatClass(TextInputFormat.class);
+        job3.setOutputFormatClass(TextOutputFormat.class);
+       
+        // Remove output if already exists        
+        FileInputFormat.setInputPaths(job3, inputPath);
+        FileOutputFormat.setOutputPath(job3, path);  
+        job3.setNumReduceTasks(1);
+        try {
+			job3.waitForCompletion(true);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}    
+        
+        return true;
+	}
+
+
+
+	private boolean getAdjacencyGraph(Path inputPath, Path path) throws IOException {
         Configuration conf = new Configuration();
         
     	Job job2 = Job.getInstance(conf);
@@ -79,7 +105,7 @@ public class PageRank {
         // Remove output if already exists        
         FileInputFormat.setInputPaths(job2, inputPath);
         FileOutputFormat.setOutputPath(job2, path);  
-                     
+        job2.setNumReduceTasks(1);
         try {
 			job2.waitForCompletion(true);
 		} catch (ClassNotFoundException e) {
@@ -110,6 +136,7 @@ public class PageRank {
        
         FileInputFormat.setInputPaths(job1, new Path(inputPath));
         FileOutputFormat.setOutputPath(job1, new Path(outputPath));  
+        job1.setNumReduceTasks(1);
                      
         try {
 			job1.waitForCompletion(true);
