@@ -19,11 +19,13 @@ public class WikiPageXMLMapper extends Mapper<LongWritable, Text, Text, Text> {
 		String pages = "!@#$ ";
 		for (String link : titleAndLinks) {
 			String otherPage = link;
+			otherPage = checkForSubpageLinks(otherPage);
+			otherPage = otherPage.replace(" ", "_");
         	otherPage = otherPage.split("\\|")[0];
         	otherPage = checkForDuplicates(otherPage, pages);
         	otherPage = (otherPage.indexOf(":") == -1) ? otherPage : "";
         	otherPage = (otherPage.indexOf("#") == -1) ? otherPage : "";
-        	otherPage = checkForSubpageLinks(otherPage);
+        	
         	
         	int linkLength = otherPage.length();
         	if (linkLength >= 3) {
@@ -38,7 +40,7 @@ public class WikiPageXMLMapper extends Mapper<LongWritable, Text, Text, Text> {
         	if (otherPage == "")
         		continue;
        
-        	Text oP = new Text(otherPage.replace(' ', '_'));
+        	Text oP = new Text(otherPage);
         	
         	pages += oP + " ";
         	
@@ -100,6 +102,8 @@ public class WikiPageXMLMapper extends Mapper<LongWritable, Text, Text, Text> {
 			result[0] = title.group(1);
 			titleStr = title.group(1);
 		}
+		
+		titleStr = titleStr.replace(" ", "_");
 		
 		String textBlob = "";
 		Matcher linksTextMatcher = linksText.matcher(value);
